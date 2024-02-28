@@ -13,6 +13,8 @@ TECH SATCK USED :
 
 -> we will explore more as we move forward in the project  and we model ourself according to the new of the application and usage 
 
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 LETS DESIGN TWITO
 
 -> Question in my find before designing TWITO 
@@ -24,6 +26,9 @@ LETS DESIGN TWITO
 • Will users be able to search tweets?
 • Do we need to display hot trending topics?
 • Will there be any push notification for new (or important) tweets?
+
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
 Step 2: System interface definition
@@ -41,6 +46,10 @@ when i generally think about system design ( It is always a good idea to estimat
 • What scale is expected from the system (e.g., number of new tweets, number of tweet views, number of timeline generations per sec., etc.)?
 • How much storage will we need? We will have different numbers if users can have photos and videos in their tweets.
 • What network bandwidth usage are we expecting? This will be crucial in deciding how we will manage traffic and balance load between servers.
+
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
 
 
 Step 4: Defining data model
@@ -65,6 +74,11 @@ the simple way to visualize is to Draw a block diagram
 <img width="629" alt="Screenshot 2024-02-28 at 10 15 41 AM" src="https://github.com/audiorpod/Twito/assets/91730407/8a073aa6-ca0d-4b27-bb71-5427f467b64e">
 
 
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
 Step 6: Detailed design
 
 Dig deeper into two or three components; interviewer’s feedback should always guide us what parts of the system need further discussion. We should be able to present different approaches, their pros and cons, and explain why we will prefer one approach on the other. Remember there is no single answer, the only important thing is to consider tradeoffs between different options while keeping system constraints in mind.
@@ -74,6 +88,9 @@ Dig deeper into two or three components; interviewer’s feedback should always 
 our data in such a way that is optimized for scanning the latest tweets?
 • How much and at which layer should we introduce cache to speed things up?
 • What components need better load balancing?
+
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
 Done for the Day feb 28-02-24  WE WILL CONTINUE  feb 29-02-24 
