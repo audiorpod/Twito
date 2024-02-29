@@ -11,6 +11,7 @@ TECH SATCK USED :
  5) mysql
  6) sequalize
 
+
 -> we will explore more as we move forward in the project  and we model ourself according to the new of the application and usage 
 
 
@@ -118,12 +119,17 @@ We will be designing a simpler version of Twitter with the following requirement
 
 
 Functional Requirements
+
 1. Users should be able to post new tweets.
 2. A user should be able to follow other users.
 3. Users should be able to mark tweets as favorites.
 4. The service should be able to create and display a user’s timeline consisting of top tweets from all the people the user follows.
 6. Tweets can contain photos and videos.
 
+<<<<<<< HEAD
+
+
+=======
 
 
 Non-functional Requirements
@@ -131,7 +137,7 @@ Non-functional Requirements
 2. Acceptable latency of the system is 200ms for timeline generation.
 3. Consistency can take a hit (in the interest of availability); if a user doesn’t see a tweet for a while, it should be fine.
 
-
+______________________________________________________________________________________________________________
 
 Extended Requirements
 1. Searching for tweets.
@@ -141,6 +147,7 @@ Extended Requirements
 6. Who to follow? Suggestions?
 7. Moments.
 
+______________________________________________________________________________________________________________
 
 3. Capacity Estimation and Constraints
 
@@ -181,6 +188,8 @@ Remember that we have 28B tweet views per day. We must show the photo of every t
 Total ~= 35GB/s
 
 
+______________________________________________________________________________________________________________
+
 
 4. System APIs
 
@@ -189,6 +198,9 @@ Once we've finalized the requirements, it's always a good idea to define the sys
 We can have SOAP or REST APIs to expose the functionality of our service. Following could be the definition of the API for posting a new tweet:
 tweet(api_dev_key, tweet_data, tweet_location, user_location, media_ids,
 maximum_results_to_return)
+
+
+______________________________________________________________________________________________________________
 
 
 Parameters:
@@ -203,12 +215,18 @@ Returns: (string)
 
 A successful post will return the URL to access that tweet. Otherwise, an appropriate HTTP error is returned.
 
+______________________________________________________________________________________________________________
+
 
 6. Database Schema
 
 
 <img width="633" alt="Screenshot 2024-02-29 at 12 25 14 PM" src="https://github.com/audiorpod/Twito/assets/91730407/4e92c21a-f779-44c8-b855-40ca63df68b5">
 
+
+
+
+______________________________________________________________________________________________________________
 
 
 7. Data Sharding
@@ -228,7 +246,9 @@ Sharding based on UserID: We can try storing all the data of a user on one serve
 
 To recover from these situations either we have to repartition/redistribute our data or use consistent hashing.
 
+
 Sharding based on TweetID: Our hash function will map each TweetID to a random server where we will store that Tweet. To search for tweets, we have to query all servers, and each server will return a set of tweets. A centralized server will aggregate these results to return them to the user. Let’s look into timeline generation example; here are the number of steps our system has to perform to generate a user’s timeline:
+
 
 1. Our application (app) server will find all the people the user follows.
 
@@ -238,6 +258,7 @@ Sharding based on TweetID: Our hash function will map each TweetID to a random s
 tweets.
 
 7. App server will merge all the results and sort them again to return the top results to the user.
+
 
 This approach solves the problem of hot users, but, in contrast to sharding by UserID, we have to query all database partitions to find tweets of a user, which can result in higher latencies.
 
@@ -252,9 +273,16 @@ We can use epoch time for this. Let’s say our TweetID will have two parts: the
 What could be the size of our TweetID? Let’s say our epoch time starts today, how many bits we would need to store the number of seconds for the next 50 years?
 86400 sec/day * 365 (days a year) * 50 (years) => 1.6B
 
+______________________________________________________________________________________________________________
+
+
+
 
 <img width="647" alt="Screenshot 2024-02-29 at 12 30 35 PM" src="https://github.com/audiorpod/Twito/assets/91730407/10961063-af50-47a8-9fe7-fe18e8541203">
 
+
+
+______________________________________________________________________________________________________________
 
 
 
@@ -271,8 +299,14 @@ In the above approach, we still have to query all the servers for timeline gener
 1. Since we don’t have any secondary index (on creation time) this will reduce our write latency. 2. While reading, we don’t need to filter on creation-time as our primary key has epoch time
 included in it.
 
+
+______________________________________________________________________________________________________________
+
+
+
  8. Cache
 
+>>>>>>> c0e19d6a47e5f645aa0585d2d40c7b6025be424c
     
 <img width="672" alt="Screenshot 2024-02-29 at 12 29 44 PM" src="https://github.com/audiorpod/Twito/assets/91730407/35787c47-828a-42ef-8523-7bcb893b8803">
 
@@ -294,6 +328,11 @@ What if we cache the latest data? Our service can benefit from this approach. Le
 Our cache would be like a hash table where ‘key’ would be ‘OwnerID’ and ‘value’ would be a doubly linked list containing all the tweets from that user in the past three days. Since we want to retrieve the most recent data first, we can always insert new tweets at the head of the linked list, which means all the older tweets will be near the tail of the linked list. Therefore, we can remove tweets from the tail to make space for newer tweets.
 
 
+______________________________________________________________________________________________________________
+
+
+
+
   10. Timeline Generation
 
       
@@ -303,6 +342,11 @@ For a detailed discussion about timeline generation, take a look at Designing Fa
 Since our system is read-heavy, we can have multiple secondary database servers for each DB partition. Secondary servers will be used for read traffic only. All writes will first go to the primary server and then will be replicated to secondary servers. This scheme will also give us fault tolerance, since whenever the primary server goes down we can failover to a secondary server.
 
 
+
+______________________________________________________________________________________________________________
+
+
+
 12. Load Balancing
 
     
@@ -310,6 +354,11 @@ We can add Load balancing layer at three places in our system 1) Between Clients
 
    
 load into consideration. If a server is overloaded or slow, the LB will not stop sending new requests to that server. To handle this, a more intelligent LB solution can be placed that periodically queries backend server about their load and adjusts traffic based on that.
+
+
+
+______________________________________________________________________________________________________________
+
 
 
 12. Monitoring
@@ -323,6 +372,11 @@ Having the ability to monitor our systems is crucial. We should constantly colle
 By monitoring these counters, we will realize if we need more replication, load balancing, or caching.
 
 
+
+______________________________________________________________________________________________________________
+
+
+
 13. Extended Requirements
 
     
@@ -332,7 +386,15 @@ How do we serve feeds? Get all the latest tweets from the people someone follows
 Alternately, we can pre-generate the feed to improve efficiency; for details please see ‘Ranking and timeline generation’ under Designing Instagram.
 
 
+
+______________________________________________________________________________________________________________
+
+
 Retweet: With each Tweet object in the database, we can store the ID of the original Tweet and not store any contents on this retweet object.
+
+
+______________________________________________________________________________________________________________
+
 
 Trending Topics: We can cache most frequently occurring hashtags or search queries in the last N seconds and keep updating them after every M seconds. We can rank trending topics based on the frequency of tweets or search queries or retweets or likes. We can give more weight to topics which are shown to more people.
 
@@ -342,11 +404,22 @@ Who to follow? How to give suggestions? This feature will improve user engagemen
 
 As only a few suggestions can be made at any time, use Machine Learning (ML) to shuffle and re- prioritize. ML signals could include people with recently increased follow-ship, common followers if the other person is following this user, common location or interests, etc.
 
+______________________________________________________________________________________________________________
+
 
 Moments: Get top news for different websites for past 1 or 2 hours, figure out related tweets, prioritize them, categorize them (news, support, financial, entertainment, etc.) using ML – supervised learning or Clustering. Then we can show these articles as trending topics in Moments.
 
 
+
+______________________________________________________________________________________________________________
+
+
+
 Search: Search involves Indexing, Ranking, and Retrieval of tweets. A similar solution is discussed in our next problem Design Twitter Search.
+
+
+
+______________________________________________________________________________________________________________
 
 
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
